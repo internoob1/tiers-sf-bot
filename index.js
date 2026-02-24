@@ -122,7 +122,7 @@ const client = new Client({
 });
 
 // ⚠️ PONÉ TU TOKEN REAL ACÁ
-const TOKEN = "MTQ3MTY4NDc3ODMzOTA3NDExMQ.G_bjQq.0zcxJQGhFsqoqiWOuoVO97hCU3kd_1LZ2tUKyY";
+const TOKEN = process.env.DISCORD_TOKEN;
 
 const CLIENT_ID = "1471684778339074111";
 const GUILD_ID = "1471915065551749257";
@@ -1378,5 +1378,6 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 // ======================================================
 // LOGIN
 // ======================================================
+
 
 client.login(TOKEN);
