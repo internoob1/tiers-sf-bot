@@ -23,6 +23,90 @@ const {
     Routes
 } = require("discord.js");
 
+const axios = require("axios");
+
+// ======================================================
+// DESCARGAR JSON DESDE GITHUB (tiers-sf-web)
+// ======================================================
+
+async function downloadFromGitHub() {
+    const user = process.env.GITHUB_USER;
+    const repo = process.env.GITHUB_REPO;
+    const token = process.env.GITHUB_TOKEN;
+
+    const files = ["tiers_players.json", "tiers_ranking.json"];
+
+    for (const file of files) {
+        try {
+            const url = `https://api.github.com/repos/${user}/${repo}/contents/${file}`;
+
+            const res = await axios.get(url, {
+                headers: {
+                    Authorization: `token ${token}`,
+                    Accept: "application/vnd.github.v3.raw"
+                }
+            });
+
+            fs.writeFileSync(`./${file}`, res.data);
+            console.log(`⬇️ Archivo descargado desde GitHub: ${file}`);
+
+        } catch (err) {
+            console.log(`⚠️ No se pudo descargar ${file} desde GitHub. Se usará el archivo local.`);
+        }
+    }
+}
+
+// ======================================================
+// SUBIR tiers_ranking.json A GITHUB (tiers-sf-web)
+// ======================================================
+
+async function uploadRankingToGitHub() {
+    const user = process.env.GITHUB_USER;
+    const repo = process.env.GITHUB_REPO;
+    const token = process.env.GITHUB_TOKEN;
+
+    const filePath = "./tiers_ranking.json";
+    const fileName = "tiers_ranking.json";
+
+    try {
+        const content = fs.readFileSync(filePath, "utf8");
+        const encoded = Buffer.from(content).toString("base64");
+
+        // Obtener SHA del archivo actual en GitHub
+        const getUrl = `https://api.github.com/repos/${user}/${repo}/contents/${fileName}`;
+        let sha = null;
+
+        try {
+            const res = await axios.get(getUrl, {
+                headers: { Authorization: `token ${token}` }
+            });
+            sha = res.data.sha;
+        } catch (err) {
+            console.log("ℹ️ El archivo no existe en GitHub, se creará uno nuevo.");
+        }
+
+        // Subir archivo
+        const putUrl = `https://api.github.com/repos/${user}/${repo}/contents/${fileName}`;
+
+        await axios.put(
+            putUrl,
+            {
+                message: "Auto-update tiers_ranking.json",
+                content: encoded,
+                sha: sha || undefined
+            },
+            {
+                headers: { Authorization: `token ${token}` }
+            }
+        );
+
+        console.log("⬆️ tiers_ranking.json subido correctamente a GitHub.");
+
+    } catch (err) {
+        console.error("❌ Error subiendo tiers_ranking.json:", err.response?.data || err);
+    }
+}
+
 // ======================================================
 // BASE DE DATOS DE JUGADORES (JSON)
 // ======================================================
@@ -224,17 +308,22 @@ const tickets = new Map(); // channelId -> { testerId, playerId, modality, selec
 // READY
 // ======================================================
 
-client.once("ready", () => {
+client.once("ready", async () => {
     console.log(`🔥 TIERS SF iniciado como ${client.user.tag}`);
-    loadPlayersDB();
-    generateRankingFile(); // Actualiza ranking al iniciar
-    console.log("📄 Ranking actualizado automáticamente al iniciar.");
+
+    await downloadFromGitHub();   // 👈 PRIMERO: sincroniza Railway con la web
+    loadPlayersDB();              // 👈 Carga la base ya actualizada
+    generateRankingFile();        // 👈 Genera ranking local
+    await uploadRankingToGitHub(); // 👈 Sube ranking a la web
+
+    console.log("📄 Ranking sincronizado al iniciar.");
 });
 
-setInterval(() => {
+setInterval(async () => {
     generateRankingFile();
-    console.log("⏱️ Ranking actualizado automáticamente (cada 30 minutos).");
-}, 30 * 60 * 1000); // 30 minutos
+    await uploadRankingToGitHub();
+    console.log("⏱️ Ranking actualizado y subido a GitHub (cada 30 minutos).");
+}, 30 * 60 * 1000);
 
 
 // ======================================================
