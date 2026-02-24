@@ -1,0 +1,99 @@
+{
+    "790702870286696468": {
+        "nick": "Internoob1",
+        "region": "SA",
+        "meleeRank": "LT3",
+        "weaponsRank": "LT3",
+        "mixedRank": "HT3",
+        "lastTestDate": "2026-02-23T17:48:50.280Z",
+        "testerId": "790702870286696468",
+        "score": 35
+    },
+    "817781158431293493": {
+        "nick": "Ciri",
+        "region": "SA",
+        "meleeRank": "LT3",
+        "weaponsRank": "Unranked",
+        "mixedRank": "HT5",
+        "lastTestDate": "2026-02-21T16:15:54.985Z",
+        "testerId": "790702870286696468",
+        "score": 12
+    },
+    "869938712769855539": {
+        "nick": "Ulises",
+        "region": "NA",
+        "meleeRank": "LT5",
+        "weaponsRank": "LT5",
+        "mixedRank": "LT5",
+        "lastTestDate": "2026-02-21T15:03:36.273Z",
+        "testerId": "790702870286696468",
+        "score": 3
+    },
+    "1364813093741527050": {
+        "nick": "SyumikS",
+        "region": "SA",
+        "meleeRank": "HT4",
+        "weaponsRank": "HT5",
+        "mixedRank": "LT3",
+        "lastTestDate": "2026-02-22T16:41:17.021Z",
+        "testerId": "790702870286696468",
+        "score": 17
+    },
+    "1452400465143922819": {
+        "nick": "Nutreja",
+        "region": "SA",
+        "meleeRank": "LT3",
+        "weaponsRank": "LT3",
+        "mixedRank": "LT3",
+        "lastTestDate": "2026-02-16T17:33:07.932Z",
+        "testerId": "790702870286696468",
+        "score": 30
+    },
+    "774885628730408960": {
+        "nick": "Luck",
+        "region": "SA",
+        "meleeRank": "Unranked",
+        "weaponsRank": "Unranked",
+        "mixedRank": "Unranked",
+        "lastTestDate": null,
+        "testerId": null
+    },
+    "684286098985582599": {
+        "nick": "Tantti",
+        "region": "SA",
+        "meleeRank": "Unranked",
+        "weaponsRank": "Unranked",
+        "mixedRank": "Unranked",
+        "lastTestDate": null,
+        "testerId": null
+    },
+    "1072530084377939988": {
+        "nick": "Elias 2",
+        "region": "SA",
+        "meleeRank": "LT3",
+        "weaponsRank": "LT4",
+        "mixedRank": "LT3",
+        "lastTestDate": "2026-02-23T17:17:55.362Z",
+        "testerId": "790702870286696468",
+        "score": 23
+    },
+    "235156837270290433": {
+        "nick": "X-Blaster",
+        "region": "SA",
+        "meleeRank": "LT3",
+        "weaponsRank": "LT3",
+        "mixedRank": "HT4",
+        "lastTestDate": "2026-02-17T17:56:01.755Z",
+        "testerId": "790702870286696468",
+        "score": 25
+    },
+    "1109943314872016896": {
+        "nick": "Emi",
+        "region": "SA",
+        "meleeRank": "Unranked",
+        "weaponsRank": "Unranked",
+        "mixedRank": "Unranked",
+        "lastTestDate": null,
+        "testerId": null
+    }
+}
