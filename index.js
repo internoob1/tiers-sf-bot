@@ -755,6 +755,7 @@ if (sub === "setrank") {
     // Guardar en JSON
     setPlayerRank(user.id, modality, rank, interaction.user.id);
 	generateRankingFile();
+	await uploadRankingToGitHub();
 
     return interaction.editReply({
         content: `✅ Rango **${rank}** asignado a **${user.username}** en **${modality}**.`
@@ -770,6 +771,8 @@ if (sub === "setrank") {
         const region = interaction.options.getString("region");
 
         updatePlayerInfo(user.id, playersDB[user.id]?.nick || "No registrado", region);
+		generateRankingFile();
+        await uploadRankingToGitHub();
 
         return interaction.reply({
             content: `🌍 Región de **${user.username}** actualizada a **${region}**.`,
@@ -785,6 +788,9 @@ if (sub === "setrank") {
         const nick = interaction.options.getString("nick");
 
         updatePlayerInfo(user.id, nick, playersDB[user.id]?.region || "Desconocida");
+		generateRankingFile();
+        await uploadRankingToGitHub();
+
 
         return interaction.reply({
             content: `📝 Nick de **${user.username}** actualizado a **${nick}**.`,
@@ -802,6 +808,7 @@ if (sub === "setrank") {
             delete playersDB[user.id];
             savePlayersDB();
 			generateRankingFile();
+			await uploadRankingToGitHub();
         }
 
         return interaction.reply({
@@ -844,6 +851,8 @@ if (sub === "setall") {
     setPlayerRank(user.id, "weapons", weapons, interaction.user.id);
     setPlayerRank(user.id, "mixed", mixed, interaction.user.id);
 	generateRankingFile();
+    await uploadRankingToGitHub();
+
 
     return interaction.editReply({
         content:
@@ -1470,3 +1479,4 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
