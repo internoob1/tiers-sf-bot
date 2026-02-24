@@ -108,6 +108,57 @@ async function uploadRankingToGitHub() {
 }
 
 // ======================================================
+// SUBIR tiers_players.json A GITHUB (tiers-sf-web)
+// ======================================================
+
+async function uploadPlayersToGitHub() {
+    const user = process.env.GITHUB_USER;
+    const repo = process.env.GITHUB_REPO;
+    const token = process.env.GITHUB_TOKEN;
+
+    const filePath = "./tiers_players.json";
+    const fileName = "tiers_players.json";
+
+    try {
+        const content = fs.readFileSync(filePath, "utf8");
+        const encoded = Buffer.from(content).toString("base64");
+
+        // Obtener SHA del archivo actual en GitHub
+        const getUrl = `https://api.github.com/repos/${user}/${repo}/contents/${fileName}`;
+        let sha = null;
+
+        try {
+            const res = await axios.get(getUrl, {
+                headers: { Authorization: `token ${token}` }
+            });
+            sha = res.data.sha;
+        } catch (err) {
+            console.log("ℹ️ El archivo no existe en GitHub, se creará uno nuevo.");
+        }
+
+        // Subir archivo
+        const putUrl = `https://api.github.com/repos/${user}/${repo}/contents/${fileName}`;
+
+        await axios.put(
+            putUrl,
+            {
+                message: "Auto-update tiers_players.json",
+                content: encoded,
+                sha: sha || undefined
+            },
+            {
+                headers: { Authorization: `token ${token}` }
+            }
+        );
+
+        console.log("⬆️ tiers_players.json subido correctamente a GitHub.");
+
+    } catch (err) {
+        console.error("❌ Error subiendo tiers_players.json:", err.response?.data || err);
+    }
+}
+
+// ======================================================
 // BASE DE DATOS DE JUGADORES (JSON)
 // ======================================================
 const fs = require("fs");
@@ -755,8 +806,10 @@ if (sub === "setrank") {
     // Guardar en JSON
     setPlayerRank(user.id, modality, rank, interaction.user.id);
 	generateRankingFile();
-	await uploadRankingToGitHub();
+	await uploadPlayersToGitHub();
+    await uploadRankingToGitHub();
 
+	
     return interaction.editReply({
         content: `✅ Rango **${rank}** asignado a **${user.username}** en **${modality}**.`
     });
@@ -771,7 +824,8 @@ if (sub === "setrank") {
         const region = interaction.options.getString("region");
 
         updatePlayerInfo(user.id, playersDB[user.id]?.nick || "No registrado", region);
-		generateRankingFile();
+        generateRankingFile();
+        await uploadPlayersToGitHub();
         await uploadRankingToGitHub();
 
         return interaction.reply({
@@ -789,8 +843,8 @@ if (sub === "setrank") {
 
         updatePlayerInfo(user.id, nick, playersDB[user.id]?.region || "Desconocida");
 		generateRankingFile();
+        await uploadPlayersToGitHub();
         await uploadRankingToGitHub();
-
 
         return interaction.reply({
             content: `📝 Nick de **${user.username}** actualizado a **${nick}**.`,
@@ -808,7 +862,8 @@ if (sub === "setrank") {
             delete playersDB[user.id];
             savePlayersDB();
 			generateRankingFile();
-			await uploadRankingToGitHub();
+			await uploadPlayersToGitHub();
+            await uploadRankingToGitHub();
         }
 
         return interaction.reply({
@@ -851,7 +906,9 @@ if (sub === "setall") {
     setPlayerRank(user.id, "weapons", weapons, interaction.user.id);
     setPlayerRank(user.id, "mixed", mixed, interaction.user.id);
 	generateRankingFile();
+    await uploadPlayersToGitHub();
     await uploadRankingToGitHub();
+
 
 
     return interaction.editReply({
@@ -1479,4 +1536,5 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
