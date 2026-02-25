@@ -220,10 +220,12 @@ function setPlayerRank(userId, modality, rank, testerId) {
     playersDB[userId][modality + "Rank"] = rank;
     playersDB[userId].testerId = testerId;
     playersDB[userId].lastTestDate = new Date().toISOString();
-	// Guardar avatar si existe
-    const tester = client.users.cache.get(testerId);
-    if (tester) {
-    playersDB[userId].avatar = tester.avatar;
+// Guardar avatar del JUGADOR (no del tester)
+const playerUser = client.users.cache.get(userId);
+if (playerUser) {
+    playersDB[userId].avatar = playerUser.avatar;
+}
+
 }
 
     // Recalcular puntaje
@@ -1554,6 +1556,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
