@@ -185,7 +185,7 @@ function savePlayersDB() {
 // FUNCIONES PARA MANEJAR JUGADORES
 // ======================================================
 
-function ensurePlayer(id, nick = "No registrado", region = "Desconocida") {
+function ensurePlayer(id, nick = "No registrado", region = "Desconocida", avatar = null) {
     if (!playersDB[id]) {
         playersDB[id] = {
             nick,
@@ -194,7 +194,9 @@ function ensurePlayer(id, nick = "No registrado", region = "Desconocida") {
             weaponsRank: "Unranked",
             mixedRank: "Unranked",
             lastTestDate: null,
-            testerId: null
+            testerId: null,
+            score: 0,
+            avatar: avatar // 👈 nuevo
         };
         savePlayersDB();
     }
@@ -218,6 +220,11 @@ function setPlayerRank(userId, modality, rank, testerId) {
     playersDB[userId][modality + "Rank"] = rank;
     playersDB[userId].testerId = testerId;
     playersDB[userId].lastTestDate = new Date().toISOString();
+	// Guardar avatar si existe
+    const tester = client.users.cache.get(testerId);
+    if (tester) {
+    playersDB[userId].avatar = tester.avatar;
+}
 
     // Recalcular puntaje
     playersDB[userId].score = calculatePlayerScore(playersDB[userId]);
@@ -226,11 +233,13 @@ function setPlayerRank(userId, modality, rank, testerId) {
 }
 
 
-function updatePlayerInfo(id, nick, region) {
+function updatePlayerInfo(id, nick, region, avatar) {
     ensurePlayer(id);
 
     playersDB[id].nick = nick;
     playersDB[id].region = region;
+
+    if (avatar) playersDB[id].avatar = avatar; // 👈 nuevo
 
     savePlayersDB();
 }
@@ -784,6 +793,8 @@ if (sub === "setrank") {
     await interaction.deferReply({ ephemeral: false });
 
     const user = interaction.options.getUser("usuario");
+	playersDB[user.id].avatar = user.avatar;
+    savePlayersDB();
     const modality = interaction.options.getString("modality");
     const rank = interaction.options.getString("rank");
 
@@ -821,6 +832,8 @@ if (sub === "setrank") {
     // ============================
     if (sub === "setregion") {
         const user = interaction.options.getUser("usuario");
+		playersDB[user.id].avatar = user.avatar;
+        savePlayersDB();
         const region = interaction.options.getString("region");
 
         updatePlayerInfo(user.id, playersDB[user.id]?.nick || "No registrado", region);
@@ -839,6 +852,8 @@ if (sub === "setrank") {
     // ============================
     if (sub === "setnick") {
         const user = interaction.options.getUser("usuario");
+		playersDB[user.id].avatar = user.avatar;
+        savePlayersDB();
         const nick = interaction.options.getString("nick");
 
         updatePlayerInfo(user.id, nick, playersDB[user.id]?.region || "Desconocida");
@@ -879,6 +894,8 @@ if (sub === "setall") {
     await interaction.deferReply({ ephemeral: false });
 
     const user = interaction.options.getUser("usuario");
+	playersDB[user.id].avatar = user.avatar;
+    savePlayersDB();
     const melee = interaction.options.getString("melee");
     const weapons = interaction.options.getString("weapons");
     const mixed = interaction.options.getString("mixed");
@@ -1536,5 +1553,6 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
