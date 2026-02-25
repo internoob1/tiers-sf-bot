@@ -420,17 +420,18 @@ function updatePlayerInfo(id, nick, region) {
 
 function generateRankingFile() {
     const rankingArray = Object.entries(playersDB)
-        .map(([id, data]) => ({
-            id,
-            nick: data.nick || "Sin nick",
-            region: data.region || "Desconocida",
-            meleeRank: data.meleeRank || "Unranked",
-            weaponsRank: data.weaponsRank || "Unranked",
-            mixedRank: data.mixedRank || "Unranked",
-            score: data.score || 0,
-            lastTestDate: data.lastTestDate || null,
-            testerId: data.testerId || null
-        }))
+.map(([id, data]) => ({
+    id,
+    nick: data.nick || "Sin nick",
+    region: data.region || "Desconocida",
+    meleeRank: data.meleeRank || "Unranked",
+    weaponsRank: data.weaponsRank || "Unranked",
+    mixedRank: data.mixedRank || "Unranked",
+    score: data.score || 0,
+    lastTestDate: data.lastTestDate || null,
+    testerId: data.testerId || null,
+    avatar: data.avatar || null   // 👈 ESTA ES LA LÍNEA QUE FALTABA
+}))
         .sort((a, b) => b.score - a.score)
         .map((player, index) => ({
             ...player,
@@ -1553,6 +1554,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
