@@ -224,7 +224,6 @@ function setPlayerRank(userId, modality, rank, testerId) {
 const playerUser = client.users.cache.get(userId);
 if (playerUser) {
     playersDB[userId].avatar = playerUser.avatar;
-}
 
 }
 
@@ -1556,6 +1555,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
