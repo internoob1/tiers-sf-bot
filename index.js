@@ -158,6 +158,19 @@ async function uploadPlayersToGitHub() {
     }
 }
 
+async function syncAllToGitHub() {
+    try {
+        generateRankingFile();
+        await uploadPlayersToGitHub();
+        await uploadRankingToGitHub();
+        console.log("⬆️ Sincronización completa: players + ranking subidos a GitHub.");
+    } catch (err) {
+        console.error("❌ Error en syncAllToGitHub:", err);
+    }
+}
+
+
+
 // ======================================================
 // BASE DE DATOS DE JUGADORES (JSON)
 // ======================================================
@@ -205,14 +218,13 @@ async function ensurePlayer(id, nick = "No registrado", region = "Desconocida", 
 
     savePlayersDB();
 
-    // Si es un jugador nuevo → subir inmediatamente
+    // Si es un jugador nuevo → sincronizar inmediatamente
     if (isNew) {
-        generateRankingFile();
-        await uploadPlayersToGitHub();
-        await uploadRankingToGitHub();
-        console.log(`⬆️ Jugador nuevo ${nick} subido inmediatamente a GitHub.`);
+        await syncAllToGitHub();
+        console.log(`🆕 Jugador nuevo registrado y sincronizado: ${nick}`);
     }
 }
+
 
 
 function setPlayerRank(userId, modality, rank, testerId) {
@@ -1568,6 +1580,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
