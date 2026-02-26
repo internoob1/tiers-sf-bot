@@ -43,7 +43,7 @@ async function downloadFromGitHub() {
     for (const file of files) {
         try {
             const url = `https://api.github.com/repos/${user}/${repo}/contents/${file}`;
-            console.log(`➡️ GET ${url}`);
+            console.log(`📥 GET ${url}`);
 
             const res = await axios.get(url, {
                 headers: {
@@ -52,16 +52,27 @@ async function downloadFromGitHub() {
                 }
             });
 
-            fs.writeFileSync(`./${file}`, res.data);
-            console.log(`✅ Archivo descargado desde GitHub: ${file}`);
+            // 🔥 GitHub devolvió el archivo crudo (string)
+            if (typeof res.data === "string") {
+                fs.writeFileSync(`./${file}`, res.data);
+                console.log(`✅ Archivo descargado desde GitHub: ${file}`);
+                continue;
+            }
+
+            // 🔥 GitHub devolvió un objeto → extraer el contenido base64
+            if (res.data && res.data.content) {
+                const decoded = Buffer.from(res.data.content, "base64").toString("utf8");
+                fs.writeFileSync(`./${file}`, decoded);
+                console.log(`✅ Archivo (base64) descargado desde GitHub: ${file}`);
+                continue;
+            }
+
+            throw new Error("Formato inesperado en la respuesta de GitHub");
 
         } catch (err) {
-            const status = err.response?.status;
-            const data = err.response?.data;
-
             console.error(`❌ Error descargando ${file} desde GitHub.`);
-            console.error(`   Status: ${status}`);
-            console.error(`   Detalle:`, data || err.message);
+            console.error(`   Status: ${err.response?.status}`);
+            console.error(`   Detalle:`, err.response?.data || err.message);
 
             console.log(`⚠️ No se pudo descargar ${file} desde GitHub. Se usará el archivo local (si existe).`);
         }
@@ -1264,6 +1275,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
