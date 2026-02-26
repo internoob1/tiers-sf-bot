@@ -36,38 +36,27 @@ async function downloadFromGitHub() {
 
     const files = ["tiers_players.json", "tiers_ranking.json"];
 
-    console.log("🌐 Intentando descargar JSON desde GitHub con:");
+    console.log("🟦 Intentando descargar JSON desde GitHub con:");
     console.log(`   USER: ${user}`);
     console.log(`   REPO: ${repo}`);
 
     for (const file of files) {
         try {
             const url = `https://api.github.com/repos/${user}/${repo}/contents/${file}`;
-            console.log(`📥 GET ${url}`);
+            console.log(`🌐 GET ${url}`);
 
             const res = await axios.get(url, {
                 headers: {
                     Authorization: `token ${token}`,
                     Accept: "application/vnd.github.v3.raw"
-                }
+                },
+                responseType: "arraybuffer" // 👈 fuerza a recibir bytes
             });
 
-            // 🔥 GitHub devolvió el archivo crudo (string)
-            if (typeof res.data === "string") {
-                fs.writeFileSync(`./${file}`, res.data);
-                console.log(`✅ Archivo descargado desde GitHub: ${file}`);
-                continue;
-            }
-
-            // 🔥 GitHub devolvió un objeto → extraer el contenido base64
-            if (res.data && res.data.content) {
-                const decoded = Buffer.from(res.data.content, "base64").toString("utf8");
-                fs.writeFileSync(`./${file}`, decoded);
-                console.log(`✅ Archivo (base64) descargado desde GitHub: ${file}`);
-                continue;
-            }
-
-            throw new Error("Formato inesperado en la respuesta de GitHub");
+            // res.data ahora es SIEMPRE un buffer de bytes
+            const raw = Buffer.from(res.data).toString("utf8");
+            fs.writeFileSync(`./${file}`, raw);
+            console.log(`✅ Archivo descargado desde GitHub: ${file}`);
 
         } catch (err) {
             console.error(`❌ Error descargando ${file} desde GitHub.`);
@@ -78,6 +67,7 @@ async function downloadFromGitHub() {
         }
     }
 }
+
 
 
 // ======================================================
@@ -1275,6 +1265,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
