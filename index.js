@@ -635,7 +635,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
     // … el resto de tus interacciones (queue, tester, next, tickets, rank, ranking, etc.)
     // quedan igual que en tu archivo actual
-}   // 👈👈👈 ESTA ES LA LLAVE QUE FALTABA
 
     // ======================================================
     // SETUPVERIFY
@@ -1251,6 +1250,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
