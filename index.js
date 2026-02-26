@@ -447,8 +447,273 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
     const commands = [
-        // … tus comandos (setupverify, queue, leave, tester, next, closeticket, rank, ranking, admin)
-        // los dejo igual que los tenías, no necesitan cambios estructurales
+{
+    name: "setupverify",
+    description: "Configura el sistema de verificación TIERS SF"
+},
+{
+    name: "queue",
+    description: "Gestión de queues",
+    options: [
+        {
+            type: 1,
+            name: "open",
+            description: "Abrir una queue",
+            options: [
+                {
+                    type: 3,
+                    name: "modality",
+                    description: "Melee / Weapons / Mixed",
+                    required: true,
+                    choices: [
+                        { name: "Melee", value: "melee" },
+                        { name: "Weapons", value: "weapons" },
+                        { name: "Mixed", value: "mixed" }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "close",
+            description: "Cerrar una queue",
+            options: [
+                {
+                    type: 3,
+                    name: "modality",
+                    description: "Melee / Weapons / Mixed",
+                    required: true,
+                    choices: [
+                        { name: "Melee", value: "melee" },
+                        { name: "Weapons", value: "weapons" },
+                        { name: "Mixed", value: "mixed" }
+                    ]
+                }
+            ]
+        }
+    ]
+},
+{
+    name: "leave",
+    description: "Salir de todas las queues"
+},
+{
+    name: "tester",
+    description: "Gestión de testers",
+    options: [
+        {
+            type: 1,
+            name: "join",
+            description: "Unirse como tester",
+            options: [
+                {
+                    type: 3,
+                    name: "modality",
+                    description: "Melee / Weapons / Mixed",
+                    required: true,
+                    choices: [
+                        { name: "Melee", value: "melee" },
+                        { name: "Weapons", value: "weapons" },
+                        { name: "Mixed", value: "mixed" }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "leave",
+            description: "Salir como tester",
+            options: [
+                {
+                    type: 3,
+                    name: "modality",
+                    description: "Melee / Weapons / Mixed",
+                    required: true,
+                    choices: [
+                        { name: "Melee", value: "melee" },
+                        { name: "Weapons", value: "weapons" },
+                        { name: "Mixed", value: "mixed" }
+                    ]
+                }
+            ]
+        }
+    ]
+},
+{
+    name: "next",
+    description: "Tomar al siguiente jugador de la queue y crear ticket",
+    options: [
+        {
+            type: 3,
+            name: "modality",
+            description: "Melee / Weapons / Mixed",
+            required: true,
+            choices: [
+                { name: "Melee", value: "melee" },
+                { name: "Weapons", value: "weapons" },
+                { name: "Mixed", value: "mixed" }
+            ]
+        }
+    ]
+},
+{
+    name: "closeticket",
+    description: "Cerrar el ticket actual"
+},
+{
+    name: "rank",
+    description: "Muestra tu rango o el de otro jugador",
+    options: [
+        {
+            type: 6,
+            name: "usuario",
+            description: "Jugador del que quieres ver el rango",
+            required: false
+        }
+    ]
+},
+{
+    name: "ranking",
+    description: "Muestra el top general TIERS SF"
+},
+{
+    name: "admin",
+    description: "Comandos administrativos de TIERS SF",
+    options: [
+        {
+            type: 1,
+            name: "setrank",
+            description: "Asignar un rango manualmente a un jugador",
+            options: [
+                {
+                    type: 6,
+                    name: "usuario",
+                    description: "Jugador al que asignar el rango",
+                    required: true
+                },
+                {
+                    type: 3,
+                    name: "modality",
+                    description: "Melee / Weapons / Mixed",
+                    required: true,
+                    choices: [
+                        { name: "Melee", value: "melee" },
+                        { name: "Weapons", value: "weapons" },
+                        { name: "Mixed", value: "mixed" }
+                    ]
+                },
+                {
+                    type: 3,
+                    name: "rank",
+                    description: "Rango a asignar",
+                    required: true,
+                    choices: [
+                        { name: "HT1", value: "HT1" },
+                        { name: "LT1", value: "LT1" },
+                        { name: "HT2", value: "HT2" },
+                        { name: "LT2", value: "LT2" },
+                        { name: "HT3", value: "HT3" },
+                        { name: "LT3", value: "LT3" },
+                        { name: "HT4", value: "HT4" },
+                        { name: "LT4", value: "LT4" },
+                        { name: "HT5", value: "HT5" },
+                        { name: "LT5", value: "LT5" }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "setregion",
+            description: "Cambiar la región de un jugador",
+            options: [
+                {
+                    type: 6,
+                    name: "usuario",
+                    description: "Jugador",
+                    required: true
+                },
+                {
+                    type: 3,
+                    name: "region",
+                    description: "Nueva región",
+                    required: true,
+                    choices: [
+                        { name: "SA", value: "SA" },
+                        { name: "NA", value: "NA" },
+                        { name: "EU", value: "EU" }
+                    ]
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "setnick",
+            description: "Cambiar el nick de un jugador",
+            options: [
+                {
+                    type: 6,
+                    name: "usuario",
+                    description: "Jugador",
+                    required: true
+                },
+                {
+                    type: 3,
+                    name: "nick",
+                    description: "Nuevo nick",
+                    required: true
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "removeplayer",
+            description: "Eliminar un jugador de la base de datos",
+            options: [
+                {
+                    type: 6,
+                    name: "usuario",
+                    description: "Jugador a eliminar",
+                    required: true
+                }
+            ]
+        },
+        {
+            type: 1,
+            name: "setall",
+            description: "Asignar los 3 rangos de una sola vez",
+            options: [
+                {
+                    type: 6,
+                    name: "usuario",
+                    description: "Jugador",
+                    required: true
+                },
+                {
+                    type: 3,
+                    name: "melee",
+                    description: "Rango Melee",
+                    required: true,
+                    choices: Object.keys(RANK_ROLES.melee).map(r => ({ name: r, value: r }))
+                },
+                {
+                    type: 3,
+                    name: "weapons",
+                    description: "Rango Weapons",
+                    required: true,
+                    choices: Object.keys(RANK_ROLES.weapons).map(r => ({ name: r, value: r }))
+                },
+                {
+                    type: 3,
+                    name: "mixed",
+                    description: "Rango Mixed",
+                    required: true,
+                    choices: Object.keys(RANK_ROLES.mixed).map(r => ({ name: r, value: r }))
+                }
+            ]
+        }
+    ]
+}
     ];
 
     await rest.put(
@@ -1265,6 +1530,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
