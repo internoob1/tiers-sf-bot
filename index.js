@@ -185,8 +185,11 @@ function savePlayersDB() {
 // FUNCIONES PARA MANEJAR JUGADORES
 // ======================================================
 
-function ensurePlayer(id, nick = "No registrado", region = "Desconocida", avatar = null) {
+async function ensurePlayer(id, nick = "No registrado", region = "Desconocida", avatar = null) {
+    let isNew = false;
+
     if (!playersDB[id]) {
+        isNew = true;
         playersDB[id] = {
             nick,
             region,
@@ -196,11 +199,21 @@ function ensurePlayer(id, nick = "No registrado", region = "Desconocida", avatar
             lastTestDate: null,
             testerId: null,
             score: 0,
-            avatar: avatar // 👈 nuevo
+            avatar: avatar
         };
-        savePlayersDB();
+    }
+
+    savePlayersDB();
+
+    // Si es un jugador nuevo → subir inmediatamente
+    if (isNew) {
+        generateRankingFile();
+        await uploadPlayersToGitHub();
+        await uploadRankingToGitHub();
+        console.log(`⬆️ Jugador nuevo ${nick} subido inmediatamente a GitHub.`);
     }
 }
+
 
 function setPlayerRank(userId, modality, rank, testerId) {
     if (!playersDB[userId]) {
@@ -1555,6 +1568,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
