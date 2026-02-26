@@ -36,9 +36,14 @@ async function downloadFromGitHub() {
 
     const files = ["tiers_players.json", "tiers_ranking.json"];
 
+    console.log("🌐 Intentando descargar JSON desde GitHub con:");
+    console.log(`   USER: ${user}`);
+    console.log(`   REPO: ${repo}`);
+
     for (const file of files) {
         try {
             const url = `https://api.github.com/repos/${user}/${repo}/contents/${file}`;
+            console.log(`➡️ GET ${url}`);
 
             const res = await axios.get(url, {
                 headers: {
@@ -48,13 +53,21 @@ async function downloadFromGitHub() {
             });
 
             fs.writeFileSync(`./${file}`, res.data);
-            console.log(`⬇️ Archivo descargado desde GitHub: ${file}`);
+            console.log(`✅ Archivo descargado desde GitHub: ${file}`);
 
         } catch (err) {
-            console.log(`⚠️ No se pudo descargar ${file} desde GitHub. Se usará el archivo local.`);
+            const status = err.response?.status;
+            const data = err.response?.data;
+
+            console.error(`❌ Error descargando ${file} desde GitHub.`);
+            console.error(`   Status: ${status}`);
+            console.error(`   Detalle:`, data || err.message);
+
+            console.log(`⚠️ No se pudo descargar ${file} desde GitHub. Se usará el archivo local (si existe).`);
         }
     }
 }
+
 
 // ======================================================
 // SUBIR tiers_ranking.json A GITHUB (tiers-sf-web)
@@ -382,13 +395,14 @@ const tickets = new Map();
 client.once("ready", async () => {
     console.log(`🔥 TIERS SF iniciado como ${client.user.tag}`);
 
-    await downloadFromGitHub();
-    loadPlayersDB();
-    generateRankingFile();
-    await uploadRankingToGitHub();
+    await downloadFromGitHub();   // 1) sincroniza Railway con la web
+    loadPlayersDB();              // 2) carga tiers_players.json
+    generateRankingFile();        // 3) genera tiers_ranking.json local
+    await uploadRankingToGitHub(); // 4) sube ranking a la web
 
     console.log("📄 Ranking sincronizado al iniciar.");
 });
+
 
 setInterval(async () => {
     generateRankingFile();
@@ -1250,6 +1264,7 @@ await resultadosChannel.send({ embeds: [resultEmbed] });
 
 
 client.login(TOKEN);
+
 
 
 
